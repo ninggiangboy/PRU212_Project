@@ -9,6 +9,8 @@ public class SlimeController : MonoBehaviour
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
     public float moveSpeed = 0.2f;
+
+    public float health = 1;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,5 +34,34 @@ public class SlimeController : MonoBehaviour
             _spriteRenderer.flipX = direction.x < 0;
             _animator.SetBool("IsMoving", direction.magnitude > 0);
         }
+    }
+
+    public float Heatth
+    {
+        set
+        {
+            health = value;
+
+            if (health <= 0) {
+                Defeated();
+            }
+
+        }
+        get
+        {
+            return health;
+        }
+    }
+
+    public void Defeated()
+    {
+        Debug.Log("Slime defeated, playing animation");
+        _animator.SetTrigger("Defeated");
+    }
+
+    public void RemoveEnemy()
+    {
+        Debug.Log("Removing enemy after defeated animation");
+        Destroy(gameObject);
     }
 }

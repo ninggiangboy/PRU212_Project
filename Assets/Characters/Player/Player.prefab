@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9128908725342759169}
   m_Layer: 0
   m_Name: SwordHitBox
-  m_TagString: Untagged
+  m_TagString: Sword
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -240,7 +240,6 @@ MonoBehaviour:
     maxNormalAngle: 0
   maxHealth: 100
   currentHealth: 0
-  healthBar: {fileID: 6704708682295758020, guid: 8aee586abfc22b949a11d3cef8e39062, type: 3}
   pushBackForce: 1
 --- !u!50 &-8928079482513654298
 Rigidbody2D:
