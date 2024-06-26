@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-
+    public GameObject StartMenu;
+    public GameObject OptionMenu;
 
     public void PlayGame()
     {
@@ -14,15 +15,17 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("SampleScene");
     }
 
-    //public void GoToSettingsMenu()
-    //{
-    //    SceneManager.LoadScene("SettingsMenu");
-    //}
+    public void OpenSetting()
+    {
+        StartMenu.SetActive(false);
+        OptionMenu.SetActive(true);
+    }
 
-    //public void GoToMainMenu()
-    //{
-    //    SceneManager.LoadScene("StartMenu");
-    //}
+    public void BackToMenu()
+    {
+        StartMenu.SetActive(true);
+        OptionMenu.SetActive(false);
+    }
 
     public void QuitGame()
     {
