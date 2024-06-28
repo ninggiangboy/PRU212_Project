@@ -11,6 +11,8 @@ public class SlimeController : MonoBehaviour
     public float moveSpeed = 0.2f;
 
     public float health = 1;
+
+    public LayerMask obstacleLayer; // Layer mask to specify the obstacle layers
     // Start is called before the first frame update
     void Start()
     {
@@ -28,11 +30,24 @@ public class SlimeController : MonoBehaviour
             // Calculate direction towards player
             Vector2 direction = playerTransform.position - transform.position;
             direction.Normalize(); // Normalize the direction vector to have a magnitude of 1
-            // Move the enemy towards the player
-            _rb.MovePosition(_rb.position + direction * (moveSpeed * Time.fixedDeltaTime));
-            // Flip the enemy sprite based on the direction
-            _spriteRenderer.flipX = direction.x < 0;
-            _animator.SetBool("IsMoving", direction.magnitude > 0);
+
+
+            // Check if there is an obstacle between slime and player
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, Vector2.Distance(transform.position, playerTransform.position), obstacleLayer);
+            if (hit.collider != null)
+            {
+                // Obstacle detected, go to idle
+                _animator.SetBool("IsMoving", false);
+            }
+            else
+            {
+                // No obstacle, move towards player
+                // Move the enemy towards the player
+                _rb.MovePosition(_rb.position + direction * (moveSpeed * Time.fixedDeltaTime));
+                // Flip the enemy sprite based on the direction
+                _spriteRenderer.flipX = direction.x < 0;
+                _animator.SetBool("IsMoving", direction.magnitude > 0);
+            }
         }
     }
 
