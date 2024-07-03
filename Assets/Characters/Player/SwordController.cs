@@ -20,7 +20,7 @@ public class SwordController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            Destroy(collision.gameObject);
+            collision.gameObject.GetComponent<SlimeController>().Defeated();
         }
     }
 }

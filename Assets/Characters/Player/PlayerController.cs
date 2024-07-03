@@ -50,6 +50,10 @@ namespace Characters.Player
 
                 if (!success) success = TryMove(new Vector2(0, _inputMovement.y));
 
+
+
+
+
                 _animator.SetBool(IsMoving, success);
                 _spriteRenderer.flipX = _inputMovement.x < 0;
                 _animator.SetFloat(Horizontal, _inputMovement.x);
