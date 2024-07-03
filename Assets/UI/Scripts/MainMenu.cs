@@ -32,8 +32,5 @@ public class MainMenu : MonoBehaviour
         Debug.Log("LoadSceneByName called with sceneName: " + "sceneName");
         EditorApplication.isPlaying = false;
         Application.Quit();
-       
     }
-    
-
 }
