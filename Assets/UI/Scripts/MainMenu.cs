@@ -12,7 +12,7 @@ public class MainMenu : MonoBehaviour
     public void PlayGame()
     {
         Debug.Log("LoadSceneByName called with sceneName: " + "sceneName");
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("GameScene");
     }
 
     public void OpenSetting()
