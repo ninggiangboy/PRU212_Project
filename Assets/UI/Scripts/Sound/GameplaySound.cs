@@ -11,6 +11,7 @@ namespace UI.Scripts.Sound
         [Header("----- Audio Clip -------")]
         public AudioClip[] background;
 
+        public AudioClip SwordSound;
         public AudioClip AsaultRifles;
         public AudioClip Miniguns_loop;
         public AudioClip Pistol;
@@ -35,6 +36,7 @@ namespace UI.Scripts.Sound
 
         public void PlaySFX(AudioClip clip)
         {
+            Debug.Log("tes");
             SFXSource.PlayOneShot(clip);
         }
     }

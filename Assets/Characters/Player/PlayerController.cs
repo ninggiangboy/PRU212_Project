@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UI.Scripts.Sound;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -27,9 +28,12 @@ namespace Characters.Player
         public float pushBackForce = 1f;
 
         private GameObject _swordHitBox;
+
+        public GameplaySound manageSound;
         // Start is called before the first frame update 
         private void Start()
         {
+            
             _rb = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -72,7 +76,10 @@ namespace Characters.Player
 
         private void OnFire()
         {
+            manageSound.PlaySFX(manageSound.SwordSound);
             _animator.SetTrigger(Attack);
+            Debug.Log(manageSound.SwordSound);
+            
         }
 
         private bool TryMove(Vector2 direction)
