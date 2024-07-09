@@ -10,7 +10,14 @@ public class SlimeController : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     public float moveSpeed = 0.2f;
 
-    public float health = 1;
+
+    [SerializeField]
+    public float health, maxHealth = 100f;
+    [SerializeField]
+    FloatingHealthBar healthBar;
+
+    private Vector3 initialPosition; // Store the initial position of the Slime
+
 
     public LayerMask obstacleLayer; // Layer mask to specify the obstacle layers
     // Start is called before the first frame update
@@ -20,6 +27,9 @@ public class SlimeController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();     
         _animator = GetComponent<Animator>();  
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        healthBar = GetComponentInChildren<FloatingHealthBar>();
+        healthBar.UpdateHealthBar(health, maxHealth);
+        initialPosition = transform.position; // Store the initial position
     }
 
     // Update is called once per frame
@@ -36,8 +46,11 @@ public class SlimeController : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, Vector2.Distance(transform.position, playerTransform.position), obstacleLayer);
             if (hit.collider != null)
             {
-                // Obstacle detected, go to idle
-                _animator.SetBool("IsMoving", false);
+                // Obstacle detected, go to initial position
+                Vector2 returnDirection = initialPosition - transform.position;
+                returnDirection.Normalize();
+                _rb.MovePosition(_rb.position + returnDirection * (moveSpeed * Time.fixedDeltaTime));
+                _animator.SetBool("IsMoving", returnDirection.magnitude > 0);
             }
             else
             {
@@ -78,5 +91,15 @@ public class SlimeController : MonoBehaviour
     {
         Debug.Log("Removing enemy after defeated animation");
         Destroy(gameObject);
+    }
+
+    public void TakeDamage(float damgeAmount)
+    {
+        health -= damgeAmount;  
+        healthBar.UpdateHealthBar(health, maxHealth);
+        if (health <= 0)
+        {
+            Defeated();
+        }
     }
 }
