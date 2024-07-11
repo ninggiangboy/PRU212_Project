@@ -33,7 +33,6 @@ namespace Characters.Player
         // Start is called before the first frame update 
         private void Start()
         {
-            
             _rb = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -53,10 +52,6 @@ namespace Characters.Player
                 if (!success) success = TryMove(new Vector2(_inputMovement.x, 0));
 
                 if (!success) success = TryMove(new Vector2(0, _inputMovement.y));
-
-
-
-
 
                 _animator.SetBool(IsMoving, success);
                 _spriteRenderer.flipX = _inputMovement.x < 0;
@@ -79,7 +74,6 @@ namespace Characters.Player
             manageSound.PlaySFX(manageSound.SwordSound);
             _animator.SetTrigger(Attack);
             Debug.Log(manageSound.SwordSound);
-            
         }
 
         private bool TryMove(Vector2 direction)
@@ -94,11 +88,12 @@ namespace Characters.Player
             return true;
         }
 
-        
         void OnCollisionEnter2D(Collision2D collision)
         {
             if (collision.gameObject.CompareTag("Enemy"))
             {
+                Vector2 pushDirection = (transform.position - collision.transform.position).normalized;
+                _rb.AddForce(pushDirection * pushBackForce, ForceMode2D.Impulse);
                 TakeDamage(10);
             }
         }
@@ -129,7 +124,6 @@ namespace Characters.Player
         {
             currentHealth -= damage;
             healthBar.SetHealth(currentHealth);
-            // _rb.AddForce(-_inputMovement * pushBackForce, ForceMode2D.Impulse); not work
             if (currentHealth <= 0)
             {
                 Defeated();
