@@ -16,11 +16,12 @@ public class SwordController : MonoBehaviour
 
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
             collision.gameObject.GetComponent<SlimeController>().Heatth -= 1;
+            collision.gameObject.GetComponent<SlimeController>().Defeated();
             Debug.Log("Slime Hit!");
         }
     }
