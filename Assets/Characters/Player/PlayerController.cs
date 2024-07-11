@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UI.Scripts.Sound;
 using UnityEngine;
@@ -90,11 +90,18 @@ namespace Characters.Player
 
         void OnCollisionEnter2D(Collision2D collision)
         {
+            // Kiểm tra nếu va chạm với Enemy và không đang trong trạng thái tấn công
             if (collision.gameObject.CompareTag("Enemy"))
             {
-                Vector2 pushDirection = (transform.position - collision.transform.position).normalized;
-                _rb.AddForce(pushDirection * pushBackForce, ForceMode2D.Impulse);
-                TakeDamage(10);
+                AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+                bool isAttacking = stateInfo.IsName("Attack") || stateInfo.IsTag("Attack");
+
+                if (!isAttacking)
+                {
+                    Vector2 pushDirection = (transform.position - collision.transform.position).normalized;
+                    _rb.AddForce(pushDirection * pushBackForce, ForceMode2D.Impulse);
+                    TakeDamage(10);
+                }
             }
         }
 
