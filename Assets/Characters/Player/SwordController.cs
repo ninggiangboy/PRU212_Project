@@ -13,14 +13,15 @@ public class SwordController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            collision.gameObject.GetComponent<SlimeController>().Defeated();
+            collision.gameObject.GetComponent<SlimeController>().Heatth -= 1;
+            Debug.Log("Slime Hit!");
         }
     }
 }
