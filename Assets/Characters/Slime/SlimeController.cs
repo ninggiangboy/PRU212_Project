@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SlimeController : MonoBehaviour
 {
@@ -12,14 +14,16 @@ public class SlimeController : MonoBehaviour
 
 
     [SerializeField]
-    public float health, maxHealth = 100f;
+    public float health, maxHealth = 120f;
     [SerializeField]
     FloatingHealthBar healthBar;
 
     private Vector3 initialPosition; // Store the initial position of the Slime
-
+    private bool isDefeated = false; 
 
     public LayerMask obstacleLayer; // Layer mask to specify the obstacle layers
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -70,7 +74,8 @@ public class SlimeController : MonoBehaviour
         {
             health = value;
 
-            if (health <= 0) {
+            if (health <= 0)
+            {
                 Defeated();
             }
 
@@ -83,8 +88,14 @@ public class SlimeController : MonoBehaviour
 
     public void Defeated()
     {
-        Debug.Log("Slime defeated, playing animation");
-        _animator.SetTrigger("Defeated");
+        if (!isDefeated)
+        {
+            isDefeated = true; 
+            Debug.Log("Slime defeated, playing animation");
+            _animator.SetTrigger("Defeated");
+            ScoreController.slimeCount++; 
+        }
+
     }
 
     public void RemoveEnemy()
@@ -102,4 +113,5 @@ public class SlimeController : MonoBehaviour
             Defeated();
         }
     }
+
 }

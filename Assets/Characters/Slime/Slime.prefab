@@ -138,8 +138,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00000023842, y: 11.3}
-  m_SizeDelta: {x: 53.67, y: 12.69}
+  m_AnchoredPosition: {x: -0, y: 9.81}
+  m_SizeDelta: {x: 27.7, y: 6.37}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1450134091108043395
 MonoBehaviour:
@@ -328,12 +328,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 0.2
-  health: 3
-  maxHealth: 3
+  health: 100
+  maxHealth: 100
   healthBar: {fileID: 0}
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
 --- !u!50 &8110527686487454270
 Rigidbody2D:
   serializedVersion: 4
@@ -430,8 +430,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.66999817, y: 0}
-  m_SizeDelta: {x: 8.66, y: 0}
+  m_AnchoredPosition: {x: -0.83, y: 0}
+  m_SizeDelta: {x: 8.32, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5709888435648208206
 CanvasRenderer:
