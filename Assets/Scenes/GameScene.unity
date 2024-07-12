@@ -761,6 +761,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Obstacle
       objectReference: {fileID: 0}
+    - target: {fileID: 3995532631860914181, guid: 109fdfe2657f123468652de76eed5fd7, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3995532631860914181, guid: 109fdfe2657f123468652de76eed5fd7, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5142755535993997150, guid: 109fdfe2657f123468652de76eed5fd7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.003
