@@ -9,17 +9,27 @@ public class PauseMenu : MonoBehaviour
     public GameObject PauseMenuUI;
     public GameObject OptionMenu;
 
+    public bool isPause { get; set; }
+
+    public void Start()
+    {
+        isPause = false;
+    }
     public void Resume()
     {
         PauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
+        Debug.Log("dfs");
+        isPause = false;
+        Debug.Log(isPause);
     }
 
     public void Pause()
     {
         PauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
-        
+        Debug.Log("sdfds");
+        isPause = true;
     }
 
     public void OpenSetting()

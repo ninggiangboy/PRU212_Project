@@ -28,12 +28,12 @@ namespace Characters.Player
         public float pushBackForce = 1f;
 
         private GameObject _swordHitBox;
-
+        private PauseMenu _pauseMenu;
         public GameplaySound manageSound;
         // Start is called before the first frame update 
         private void Start()
         {
-            
+            _pauseMenu = FindObjectOfType<PauseMenu>();
             _rb = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -76,10 +76,15 @@ namespace Characters.Player
 
         private void OnFire()
         {
-            manageSound.PlaySFX(manageSound.SwordSound);
-            _animator.SetTrigger(Attack);
-            Debug.Log(manageSound.SwordSound);
-            
+            Debug.Log( "Player Controller"+ _pauseMenu.isPause);
+            if (_pauseMenu.isPause == false)
+            {
+                manageSound.PlaySFX(manageSound.SwordSound);
+                _animator.SetTrigger(Attack);
+            }
+
+         
+
         }
 
         private bool TryMove(Vector2 direction)
@@ -94,7 +99,7 @@ namespace Characters.Player
             return true;
         }
 
-        
+
         void OnCollisionEnter2D(Collision2D collision)
         {
             if (collision.gameObject.CompareTag("Enemy"))
