@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using UI.Scripts.Sound;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,16 +17,19 @@ namespace Characters.Player
         public ContactFilter2D movementFilter;
         public int maxHealth = 100;
         public int currentHealth;
+        public float pushBackForce = 1f;
         private readonly List<RaycastHit2D> _castCollisions = new();
         private Animator _animator;
         private bool _canMove = true;
+
+        private HealthBarController _healthBar;
         private Vector2 _inputMovement;
+        private GameplaySound _manageSound;
         private Rigidbody2D _rb;
         private SpriteRenderer _spriteRenderer;
-        private HealthBarController healthBar;
-        public float pushBackForce = 1f;
 
         private GameObject _swordHitBox;
+
         // Start is called before the first frame update 
         private void Start()
         {
@@ -34,8 +37,9 @@ namespace Characters.Player
             _animator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _swordHitBox = transform.Find("SwordHitBox").gameObject;
-            healthBar = GameObject.Find("HealthBar").GetComponent<HealthBarController>();
-            healthBar.SetMaxHealth(maxHealth);
+            _manageSound = FindObjectOfType<GameplaySound>();
+            _healthBar = GameObject.Find("HealthBarPlayer").GetComponent<HealthBarController>();
+            _healthBar.SetMaxHealth(maxHealth);
             currentHealth = maxHealth;
         }
 
@@ -45,15 +49,8 @@ namespace Characters.Player
             if (_canMove && _inputMovement != Vector2.zero)
             {
                 var success = TryMove(_inputMovement);
-
                 if (!success) success = TryMove(new Vector2(_inputMovement.x, 0));
-
                 if (!success) success = TryMove(new Vector2(0, _inputMovement.y));
-
-
-
-
-
                 _animator.SetBool(IsMoving, success);
                 _spriteRenderer.flipX = _inputMovement.x < 0;
                 _animator.SetFloat(Horizontal, _inputMovement.x);
@@ -65,6 +62,12 @@ namespace Characters.Player
             }
         }
 
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision.gameObject.CompareTag("Enemy") && _canMove) TakeDamage(maxHealth / 10);
+        }
+
         private void OnMove(InputValue value)
         {
             _inputMovement = value.Get<Vector2>();
@@ -72,6 +75,7 @@ namespace Characters.Player
 
         private void OnFire()
         {
+            _manageSound.PlaySFX(_manageSound.SwordSound);
             _animator.SetTrigger(Attack);
         }
 
@@ -87,16 +91,7 @@ namespace Characters.Player
             return true;
         }
 
-        
-        void OnCollisionEnter2D(Collision2D collision)
-        {
-            if (collision.gameObject.CompareTag("Enemy"))
-            {
-                TakeDamage(10);
-            }
-        }
-
-        void Defeated()
+        private void Defeated()
         {
             _animator.SetTrigger(Defeat);
         }
@@ -121,12 +116,16 @@ namespace Characters.Player
         private void TakeDamage(int damage)
         {
             currentHealth -= damage;
-            healthBar.SetHealth(currentHealth);
+            _healthBar.SetHealth(currentHealth);
             // _rb.AddForce(-_inputMovement * pushBackForce, ForceMode2D.Impulse); not work
-            if (currentHealth <= 0)
-            {
-                Defeated();
-            }
+            if (currentHealth <= 0) Defeated();
+        }
+
+        public void IncreaseHealth(int i)
+        {
+            currentHealth += i;
+            if (currentHealth > maxHealth) currentHealth = maxHealth;
+            _healthBar.SetHealth(currentHealth);
         }
     }
 }

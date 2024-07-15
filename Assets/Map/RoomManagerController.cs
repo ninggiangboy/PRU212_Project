@@ -14,7 +14,12 @@ namespace Map
         [SerializeField] private int minRooms = 10;
 
         private readonly List<GameObject> _rooms = new();
+
+        private readonly List<GameObject> CreateRooms = new();
+        // [SerializeField] private readonly GameObject endRoomPrefab = null!;
         private int _count;
+
+        private GamePlayScript _gamePlay;
         private bool _generateComplete;
         private int[,] _grid;
         private Queue<Vector2Int> _roomsToGenerate = null!;
@@ -24,25 +29,30 @@ namespace Map
             _grid = new int[gridSizeX, gridSizeY];
             _roomsToGenerate = new Queue<Vector2Int>();
             var initialRoomIndex = new Vector2Int(gridSizeX / 2, gridSizeY / 2);
+            _gamePlay = FindObjectOfType<GamePlayScript>();
             StartRoomGeneration(initialRoomIndex);
         }
 
         private void Update()
         {
-            if ((_roomsToGenerate.Count > 0 || _count < minRooms) && _count < maxRooms && !_generateComplete)
+            if (!_generateComplete)
             {
-                if (_roomsToGenerate.Count == 0) return;
-                var index = _roomsToGenerate.Dequeue();
-                var x = index.x;
-                var y = index.y;
-                TryGenerateRoom(new Vector2Int(x - 1, y));
-                TryGenerateRoom(new Vector2Int(x + 1, y));
-                TryGenerateRoom(new Vector2Int(x, y - 1));
-                TryGenerateRoom(new Vector2Int(x, y + 1));
-            }
-            else if (!_generateComplete)
-            {
-                _generateComplete = true;
+                if (_roomsToGenerate.Count > 0 || _count < minRooms)
+                {
+                    if (_roomsToGenerate.Count == 0) return;
+                    var index = _roomsToGenerate.Dequeue();
+                    var x = index.x;
+                    var y = index.y;
+                    TryGenerateRoom(new Vector2Int(x - 1, y));
+                    TryGenerateRoom(new Vector2Int(x + 1, y));
+                    TryGenerateRoom(new Vector2Int(x, y - 1));
+                    TryGenerateRoom(new Vector2Int(x, y + 1));
+                }
+                else
+                {
+                    _generateComplete = true;
+                    _gamePlay.TotalRooms = _count;
+                }
             }
         }
 
@@ -51,12 +61,15 @@ namespace Map
             var color = new Color(0, 1, 1, 0.04f);
             Gizmos.color = color;
 
-            for (var x = 0; x < gridSizeX; x++)
-            for (var y = 0; y < gridSizeY; y++)
+            for (var x = 0; x < gridSizeX; x++) 
             {
-                var position = GetPositionFromIndex(new Vector2Int(x, y));
-                Gizmos.DrawWireCube(position, new Vector3(RoomWidth, RoomHeight, 1));
+                for (var y = 0; y < gridSizeY; y++)
+                {
+                    var position = GetPositionFromIndex(new Vector2Int(x, y));
+                    Gizmos.DrawWireCube(position, new Vector3(RoomWidth, RoomHeight, 1));
+                }
             }
+            
         }
 
         private GameObject GetRandomRoom()
@@ -72,6 +85,7 @@ namespace Map
             var initialRoom = Instantiate(GetRandomRoom(), GetPositionFromIndex(index), Quaternion.identity);
             initialRoom.name = $"Room_{_count}";
             initialRoom.GetComponent<RoomController>().RoomPosition = index;
+            _gamePlay.RoomsEntered.Add(initialRoom.GetComponent<RoomController>());
             _rooms.Add(initialRoom);
         }
 
@@ -90,12 +104,16 @@ namespace Map
         private bool TryGenerateRoom(Vector2Int index)
         {
             if (_count >= maxRooms) return false;
-            if (Random.value < 0.5f && index != Vector2Int.zero) return false;
 
             // Check if index is within the valid range of the _grid array
             if (index.x < 0 || index.x >= gridSizeX || index.y < 0 || index.y >= gridSizeY) return false;
 
+            // Check if a room already exists at this position
+            if (_grid[index.x, index.y] == 1) return false;
+
             if (CountNeighbours(index) > 2) return false;
+
+            if (Random.value < 0.5f && index != Vector2Int.zero) return false;
             _roomsToGenerate.Enqueue(index);
             _grid[index.x, index.y] = 1;
             _count++;

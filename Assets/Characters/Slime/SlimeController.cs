@@ -1,29 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
+using Characters.Slime;
 using UnityEngine;
 
 public class SlimeController : MonoBehaviour
 {
-    private Transform playerTransform;
-    private Rigidbody2D _rb;
-    private Animator _animator;
-    private SpriteRenderer _spriteRenderer;
     public float moveSpeed = 0.2f;
 
-    public float health = 1;
 
+    [SerializeField] public float health, maxHealth = 120f;
+
+    [SerializeField] private FloatingHealthBar healthBar;
     public LayerMask obstacleLayer; // Layer mask to specify the obstacle layers
-    // Start is called before the first frame update
-    void Start()
+    private Animator _animator;
+    private Rigidbody2D _rb;
+    private SlimePool _slimePool;
+    private SpriteRenderer _spriteRenderer;
+
+    private Vector3 initialPosition; // Store the initial position of the Slime
+    private bool isDefeated;
+    private Transform playerTransform;
+
+    public float Heatth
     {
-        playerTransform = GameObject.Find("Player").transform; 
-        _rb = GetComponent<Rigidbody2D>();     
-        _animator = GetComponent<Animator>();  
+        set
+        {
+            health = value;
+
+            if (health <= 0) Defeated();
+        }
+        get => health;
+    }
+
+
+    // Start is called before the first frame update
+    private void Start()
+    {
+        _slimePool = FindObjectOfType<SlimePool>();
+        playerTransform = GameObject.Find("Player").transform;
+        _rb = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        healthBar = GetComponentInChildren<FloatingHealthBar>();
+        healthBar.UpdateHealthBar(health, maxHealth);
+        initialPosition = transform.position; // Store the initial position
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (playerTransform != null) // Check if player exists
         {
@@ -33,11 +55,15 @@ public class SlimeController : MonoBehaviour
 
 
             // Check if there is an obstacle between slime and player
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, Vector2.Distance(transform.position, playerTransform.position), obstacleLayer);
+            var hit = Physics2D.Raycast(transform.position, direction,
+                Vector2.Distance(transform.position, playerTransform.position), obstacleLayer);
             if (hit.collider != null)
             {
-                // Obstacle detected, go to idle
-                _animator.SetBool("IsMoving", false);
+                // Obstacle detected, go to initial position
+                Vector2 returnDirection = initialPosition - transform.position;
+                returnDirection.Normalize();
+                _rb.MovePosition(_rb.position + returnDirection * (moveSpeed * Time.fixedDeltaTime));
+                _animator.SetBool("IsMoving", returnDirection.magnitude > 0);
             }
             else
             {
@@ -51,32 +77,25 @@ public class SlimeController : MonoBehaviour
         }
     }
 
-    public float Heatth
-    {
-        set
-        {
-            health = value;
-
-            if (health <= 0) {
-                Defeated();
-            }
-
-        }
-        get
-        {
-            return health;
-        }
-    }
-
     public void Defeated()
     {
-        Debug.Log("Slime defeated, playing animation");
-        _animator.SetTrigger("Defeated");
+        if (!isDefeated)
+        {
+            isDefeated = true;
+            _animator.SetTrigger("Defeated");
+            ScoreController.slimeCount++;
+        }
     }
 
     public void RemoveEnemy()
     {
-        Debug.Log("Removing enemy after defeated animation");
-        Destroy(gameObject);
+        _slimePool.ReturnSlime(gameObject);
+    }
+
+    public void TakeDamage(float damgeAmount)
+    {
+        health -= damgeAmount;
+        healthBar.UpdateHealthBar(health, maxHealth);
+        if (health <= 0) Defeated();
     }
 }

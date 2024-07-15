@@ -5,17 +5,26 @@ namespace Map
     public class RoomController : MonoBehaviour
     {
         [SerializeField] private GameObject[] doors;
+
+        private GamePlayScript _gamePlay;
         public Vector2Int RoomPosition { get; set; }
+
+        private void Start()
+        {
+            _gamePlay = FindObjectOfType<GamePlayScript>();
+        }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.CompareTag("Player")) MoveCameraToRoom();
+            if (other.CompareTag("Player"))
+            {
+                MoveCameraToRoom();
+                if (!_gamePlay.RoomsEntered.Contains(this))
+                {
+                    _gamePlay.RoomsEntered.Add(this);
+                }
+            }
         }
-
-        // private void OnCollisionEnter2D(Collision2D other)
-        // {
-        //     if (other.gameObject.CompareTag("Player")) MoveCameraToRoom();
-        // }
 
         public void OpenDoors(Vector2Int direction)
         {
