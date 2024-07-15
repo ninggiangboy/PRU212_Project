@@ -332,6 +332,7 @@ MonoBehaviour:
   health: 100
   maxHealth: 100
   healthBar: {fileID: 406500269911762631}
+  timeToReturn: 30
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 64

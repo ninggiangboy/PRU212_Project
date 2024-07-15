@@ -45,9 +45,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cf0c9e7107d4c7449d280f3f198dba4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumSpawnTime: 1
-  maximumSpawnTime: 2
-  maxSlimes: 10
+  minimumSpawnTime: 10
+  maximumSpawnTime: 15
+  maxSlimes: 5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!212 &8932891542811159454
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -88,8 +91,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: -1135673437, guid: fd1fc01bdb7db6c469eef5344a07e0d9, type: 3}
+  m_SortingOrder: -2
+  m_Sprite: {fileID: -1135673437, guid: c6cd26bb431250b47b7d9c3ca1ead5bf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

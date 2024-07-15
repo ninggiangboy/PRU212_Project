@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Platformer.UI
 {
@@ -19,6 +19,17 @@ namespace Platformer.UI
                 var g = panels[i];
                 if (g.activeSelf != active) g.SetActive(active);
             }
+        }
+
+        public void PlayAgain()
+        {
+            SceneManager.LoadScene("GameScene");
+        }
+
+        public void Quit() 
+        {
+            EditorApplication.isPlaying = false;
+            Application.Quit();
         }
 
         void OnEnable()

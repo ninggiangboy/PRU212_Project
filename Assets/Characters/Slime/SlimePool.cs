@@ -31,6 +31,7 @@ namespace Characters.Slime
             else
             {
                 var slime = Instantiate(slimePrefab);
+                _pool.Enqueue(slime);
                 return slime;
             }
         }

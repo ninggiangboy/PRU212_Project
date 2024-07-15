@@ -1,7 +1,9 @@
+using Map;
 using UnityEngine;
 
 public class SwordController : MonoBehaviour
 {
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -18,7 +20,6 @@ public class SwordController : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             collision.gameObject.GetComponent<SlimeController>().TakeDamage(25);
-            Debug.Log("Enemy Hit");
         }
     }
 }

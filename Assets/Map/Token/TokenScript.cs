@@ -5,17 +5,12 @@ namespace Map.Token
 {
     public class TokenScript : MonoBehaviour
     {
-        private CoinUIScript _coinUIScript;
+        private GamePlayScript _gamePlay;
 
         // Start is called before the first frame update
         private void Start()
         {
-            _coinUIScript = GameObject.Find("CoinScoreUI").GetComponent<CoinUIScript>();
-        }
-
-        // Update is called once per frame
-        private void Update()
-        {
+            _gamePlay = FindObjectOfType<GamePlayScript>();
         }
 
         // when collision with player
@@ -24,10 +19,8 @@ namespace Map.Token
             if (other.gameObject.CompareTag("Player"))
             {
                 gameObject.SetActive(false);
-                _coinUIScript.IncreaseCoinCount();
+                _gamePlay.AddCoin();
             }
-            // destroy token
-            // Destroy(gameObject);
         }
     }
 }

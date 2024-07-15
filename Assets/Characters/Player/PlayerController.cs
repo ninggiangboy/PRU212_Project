@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Map;
 using UI.Scripts.Sound;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -29,6 +30,7 @@ namespace Characters.Player
         private SpriteRenderer _spriteRenderer;
 
         private GameObject _swordHitBox;
+        private GamePlayScript _gamePlayScript;
 
         // Start is called before the first frame update 
         private void Start()
@@ -41,6 +43,7 @@ namespace Characters.Player
             _healthBar = GameObject.Find("HealthBarPlayer").GetComponent<HealthBarController>();
             _healthBar.SetMaxHealth(maxHealth);
             currentHealth = maxHealth;
+            _gamePlayScript = FindObjectOfType<GamePlayScript>();
         }
 
         // Update is called once per frame
@@ -98,7 +101,7 @@ namespace Characters.Player
 
         public void EndGame()
         {
-            Time.timeScale = 0;
+             _gamePlayScript.LoseGame();
         }
 
         private void LockMovement()
@@ -117,8 +120,11 @@ namespace Characters.Player
         {
             currentHealth -= damage;
             _healthBar.SetHealth(currentHealth);
-            // _rb.AddForce(-_inputMovement * pushBackForce, ForceMode2D.Impulse); not work
-            if (currentHealth <= 0) Defeated();
+            if (currentHealth <= 0) {
+                Defeated();
+                // delay 1s
+                Invoke(nameof(EndGame), 1f);
+            }
         }
 
         public void IncreaseHealth(int i)

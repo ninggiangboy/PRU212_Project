@@ -11,7 +11,7 @@ namespace Characters.Slime
         private int _currentSlimeCount;
         private Transform _playerTransform;
         private SlimePool _slimePool;
-
+        public LayerMask obstacleLayer;
         private float _timeUntilSpawn;
 
         private void Awake()
@@ -39,18 +39,24 @@ namespace Characters.Slime
         }
 
         public void AddSlime() {
-                var slime = _slimePool.GetSlime();
-                if (slime)
-                {
-                    slime.transform.position = transform.position;
-                    _currentSlimeCount++; // Increment current slime count
-                    SetTimeUntilSpawn();
-                }
+            var slime = _slimePool.GetSlime();
+            if (slime)
+            {
+                slime.transform.position = transform.position;
+                _currentSlimeCount++; // Increment current slime count
+                SetTimeUntilSpawn();
+            }
         }
 
         private bool IsPlayerNear()
         {
-            return Vector3.Distance(transform.position, _playerTransform.position) <= 5f;
+            Vector2 direction = _playerTransform.position - transform.position;
+            direction.Normalize(); // Normalize the direction vector to have a magnitude of 1
+
+            // Check if there is an obstacle between slime and player
+            var hit = Physics2D.Raycast(transform.position, direction,
+                Vector2.Distance(transform.position, _playerTransform.position), obstacleLayer);
+            return hit.collider == null;
         }
 
         private void SetTimeUntilSpawn()

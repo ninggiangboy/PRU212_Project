@@ -1,4 +1,5 @@
 using Characters.Slime;
+using Map;
 using UnityEngine;
 
 public class SlimeController : MonoBehaviour
@@ -8,8 +9,11 @@ public class SlimeController : MonoBehaviour
 
     [SerializeField] public float health, maxHealth = 120f;
 
-    [SerializeField] private FloatingHealthBar healthBar;
-    public LayerMask obstacleLayer; // Layer mask to specify the obstacle layers
+    [SerializeField] public FloatingHealthBar healthBar;
+    [SerializeField] private float timeToReturn = 60f;
+    private float timer = 0f;
+
+    [SerializeField] private LayerMask obstacleLayer; // Layer mask to specify the obstacle layers
     private Animator _animator;
     private Rigidbody2D _rb;
     private SlimePool _slimePool;
@@ -18,6 +22,9 @@ public class SlimeController : MonoBehaviour
     private Vector3 initialPosition; // Store the initial position of the Slime
     private bool isDefeated;
     private Transform playerTransform;
+    private bool isDetectedPlayer;
+    private GamePlayScript _gamePlay;
+
 
     public float Heatth
     {
@@ -42,6 +49,14 @@ public class SlimeController : MonoBehaviour
         healthBar = GetComponentInChildren<FloatingHealthBar>();
         healthBar.UpdateHealthBar(health, maxHealth);
         initialPosition = transform.position; // Store the initial position
+        _gamePlay = FindObjectOfType<GamePlayScript>();
+    }
+
+    void OnEnable()
+    {
+        isDefeated = false;
+        health = maxHealth;
+        healthBar.UpdateHealthBar(health, maxHealth);
     }
 
     // Update is called once per frame
@@ -64,6 +79,11 @@ public class SlimeController : MonoBehaviour
                 returnDirection.Normalize();
                 _rb.MovePosition(_rb.position + returnDirection * (moveSpeed * Time.fixedDeltaTime));
                 _animator.SetBool("IsMoving", returnDirection.magnitude > 0);
+                timer += Time.fixedDeltaTime; // Increment the timer by the elapsed time since last FixedUpdate call
+                if (timer >= timeToReturn && isDetectedPlayer)
+                {
+                    RemoveEnemy(); // Call the method to return the slime to the pool
+                }
             }
             else
             {
@@ -73,6 +93,8 @@ public class SlimeController : MonoBehaviour
                 // Flip the enemy sprite based on the direction
                 _spriteRenderer.flipX = direction.x < 0;
                 _animator.SetBool("IsMoving", direction.magnitude > 0);
+                timer = 0;
+                isDetectedPlayer = true;
             }
         }
     }
@@ -83,7 +105,7 @@ public class SlimeController : MonoBehaviour
         {
             isDefeated = true;
             _animator.SetTrigger("Defeated");
-            ScoreController.slimeCount++;
+            _gamePlay.AddEnemyDefeated();
         }
     }
 

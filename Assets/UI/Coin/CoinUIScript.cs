@@ -6,27 +6,14 @@ namespace UI.Coin
     public class CoinUIScript : MonoBehaviour
     {
         public TMP_Text coinText;
-        public int coinCount;
 
         // Start is called before the first frame update
         private void Start()
         {
-            coinCount = 0;
-            ShowCoinCount();
+            ShowCoinCount(0);
         }
 
-        // Update is called once per frame
-        private void Update()
-        {
-        }
-
-        public void IncreaseCoinCount()
-        {
-            coinCount++;
-            ShowCoinCount();
-        }
-
-        private void ShowCoinCount()
+        public void ShowCoinCount(int coinCount)
         {
             coinText.text = "x " + coinCount;
         }

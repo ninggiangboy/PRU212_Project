@@ -7,16 +7,17 @@ namespace Map
     {
         private const int RoomWidth = 3;
         private const int RoomHeight = 3;
-        [SerializeField] private int gridSizeX = 10;
-        [SerializeField] private int gridSizeY = 10;
+        [SerializeField] private int gridSizeX = 15;
+        [SerializeField] private int gridSizeY = 15;
         [SerializeField] private GameObject[] roomPrefabs;
         [SerializeField] private int maxRooms = 15;
         [SerializeField] private int minRooms = 10;
+        [SerializeField] private GameObject endRoomPrefab;
+        [SerializeField] private GameObject startRoomPrefab;
 
         private readonly List<GameObject> _rooms = new();
 
         private readonly List<GameObject> CreateRooms = new();
-        // [SerializeField] private readonly GameObject endRoomPrefab = null!;
         private int _count;
 
         private GamePlayScript _gamePlay;
@@ -50,6 +51,14 @@ namespace Map
                 }
                 else
                 {
+                    var lastRoom = _rooms[_rooms.Count - 1];
+                    var endRoom = Instantiate(endRoomPrefab, lastRoom.transform.position, Quaternion.identity);
+                    OpenDoors(endRoom, lastRoom.GetComponent<RoomController>().RoomPosition);
+                    endRoom.name = $"Room_{_count + 1}";
+                    endRoom.GetComponent<RoomController>().RoomPosition = lastRoom.GetComponent<RoomController>().RoomPosition;
+                    _rooms.Remove(lastRoom);
+                    Destroy(lastRoom);
+                    _rooms.Add(endRoom);
                     _generateComplete = true;
                     _gamePlay.TotalRooms = _count;
                 }
@@ -82,7 +91,7 @@ namespace Map
             _roomsToGenerate.Enqueue(index);
             _grid[index.x, index.y] = 1;
             _count++;
-            var initialRoom = Instantiate(GetRandomRoom(), GetPositionFromIndex(index), Quaternion.identity);
+            var initialRoom = Instantiate(startRoomPrefab, GetPositionFromIndex(index), Quaternion.identity);
             initialRoom.name = $"Room_{_count}";
             initialRoom.GetComponent<RoomController>().RoomPosition = index;
             _gamePlay.RoomsEntered.Add(initialRoom.GetComponent<RoomController>());
